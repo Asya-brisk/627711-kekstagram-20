@@ -25,9 +25,9 @@ var getRandomIndex = function (arr) {
 // Функция, возвращающаая массив комментариев
 var generateMessages = function () {
   var messages = [];
-  var commentNum = getRandomNumber(MIN_AVATAR_NUM, MAX_AVATAR_NUM + 4);
+  var commentNum = getRandomNumber(MIN_AVATAR_NUM, MAX_AVATAR_NUM + 9);
 
-  for (var j = 0; j <= commentNum; j++) {
+  for (var j = 0; j < commentNum; j++) {
     messages.push({
       avatar: 'img/avatar-' + [getRandomNumber(MIN_AVATAR_NUM, MAX_AVATAR_NUM)] + '.svg',
       message: MESSAGES[getRandomIndex(MESSAGES)],
@@ -54,19 +54,123 @@ var getPhotoInfo = function () {
 var pictures = getPhotoInfo();
 
 // Создаем DOM-элементы, соответствующие фотографиям
-var renderPicture = function (picture) {
+var renderPicture = function (picture, index) {
   var pictureElement = pictureTemplate.cloneNode(true);
 
   pictureElement.querySelector('.picture__img').src = picture.url;
   pictureElement.querySelector('.picture__likes').textContent = picture.likes;
   pictureElement.querySelector('.picture__comments').textContent = picture.comments.length;
+  pictureElement.querySelector('.picture__img').setAttribute('data-id', index);
 
   return pictureElement;
 };
 
 // Вставляем DOM-элементы в блок .pictures
-var fragment = document.createDocumentFragment();
-for (var i = 0; i < pictures.length; i++) {
-  fragment.appendChild(renderPicture(pictures[i]));
-}
-picturesList.appendChild(fragment);
+var makePictureList = function (userPictures) {
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < userPictures.length; i++) {
+    fragment.appendChild(renderPicture(userPictures[i], i));
+  }
+  picturesList.appendChild(fragment);
+};
+
+makePictureList(pictures);
+
+// preview.js
+var body = document.querySelector('body');
+var bigPicture = document.querySelector('.big-picture');
+var commentsList = document.querySelector('.social__comments');
+var socialComment = commentsList.querySelector('.social__comment');
+
+var addClass = function (element, className) {
+  element.classList.add(className);
+};
+
+var removeClass = function (element, className) {
+  element.classList.remove(className);
+};
+
+// Генерируем шаблон большого изображения
+var renderBigPhoto = function (picture) {
+  var fragment = document.createDocumentFragment();
+  bigPicture.querySelector('.big-picture__img img').src = picture.url;
+  bigPicture.querySelector('.likes-count').textContent = picture.likes;
+  bigPicture.querySelector('.social__caption').textContent = picture.description;
+  bigPicture.querySelector('.comments-count').textContent = picture.comments.length;
+  picture.comments.forEach(function (comment) {
+    var commentElement = socialComment.cloneNode(true);
+
+    commentElement.querySelector('.social__picture').src = comment.avatar;
+    commentElement.querySelector('.social__picture').alt = comment.name;
+    commentElement.querySelector('.social__text').textContent = comment.message;
+    fragment.appendChild(commentElement);
+  });
+  commentsList.appendChild(fragment);
+};
+
+var clearComment = function () {
+  commentsList.innerHTML = '';
+};
+
+var hideElements = function () {
+  var commentsCounter = document.querySelector('.social__comment-count');
+  var commentsLoader = document.querySelector('.comments-loader');
+  addClass(commentsCounter, 'hidden');
+  addClass(commentsLoader, 'hidden');
+};
+
+clearComment();
+
+// open big picture
+var cancelButton = bigPicture.querySelector('.big-picture__cancel');
+
+var onBigPicEscPress = function (evt) {
+  if (evt.key === 'Escape') {
+    closeBigPicture();
+  }
+};
+
+var openBigPicture = function (index) {
+  var currentPicture = pictures[index];
+  renderBigPhoto(currentPicture);
+  hideElements();
+  addClass(body, 'modal-open');
+  removeClass(bigPicture, 'hidden');
+
+  document.addEventListener('keydown', onBigPicEscPress);
+};
+
+var closeBigPicture = function () {
+  addClass(bigPicture, 'hidden');
+  removeClass(body, 'modal-open');
+  document.removeEventListener('keydown', onBigPicEscPress);
+};
+
+cancelButton.addEventListener('click', function () {
+  closeBigPicture();
+});
+
+var onEnterEvent = function (evt, action, arr) {
+  if (evt.keyCode === 'Enter') {
+    evt.preventDefault();
+    action(arr);
+  }
+};
+
+var showPhoto = function () {
+  picturesList.addEventListener('click', function (evt) {
+    if (evt.target.classList.contains('picture__img')) {
+      var pictureIndex = evt.target.dataset.id;
+      openBigPicture(pictureIndex);
+    }
+  });
+
+  picturesList.addEventListener('keydown', function (evt) {
+    if (evt.target.classList.contains('picture')) {
+      var pictureIndex = evt.target.querySelector('img').dataset.id;
+      onEnterEvent(evt, openBigPicture, pictureIndex);
+    }
+  });
+};
+
+showPhoto();
