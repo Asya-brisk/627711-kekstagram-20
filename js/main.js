@@ -37,7 +37,7 @@ var generateMessages = function () {
   return messages;
 };
 
-// Функция, возвращающаая массив объектов описания фотографии
+// Функция, возвращающаая массив объектов со свойствами фотографий
 var getPhotoInfo = function () {
   var photos = [];
   for (var i = 1; i <= PHOTOS_NUMBER; i++) {
@@ -82,14 +82,6 @@ var bigPicture = document.querySelector('.big-picture');
 var commentsList = document.querySelector('.social__comments');
 var socialComment = commentsList.querySelector('.social__comment');
 
-var addClass = function (element, className) {
-  element.classList.add(className);
-};
-
-var removeClass = function (element, className) {
-  element.classList.remove(className);
-};
-
 // Генерируем шаблон большого изображения
 var renderBigPhoto = function (picture) {
   var fragment = document.createDocumentFragment();
@@ -97,6 +89,7 @@ var renderBigPhoto = function (picture) {
   bigPicture.querySelector('.likes-count').textContent = picture.likes;
   bigPicture.querySelector('.social__caption').textContent = picture.description;
   bigPicture.querySelector('.comments-count').textContent = picture.comments.length;
+  window.utils.removeChilds(commentsList);
   picture.comments.forEach(function (comment) {
     var commentElement = socialComment.cloneNode(true);
 
@@ -108,20 +101,14 @@ var renderBigPhoto = function (picture) {
   commentsList.appendChild(fragment);
 };
 
-var clearComment = function () {
-  commentsList.innerHTML = '';
-};
-
 var hideElements = function () {
   var commentsCounter = document.querySelector('.social__comment-count');
   var commentsLoader = document.querySelector('.comments-loader');
-  addClass(commentsCounter, 'hidden');
-  addClass(commentsLoader, 'hidden');
+  window.utils.addClass(commentsCounter, 'hidden');
+  window.utils.addClass(commentsLoader, 'hidden');
 };
 
-clearComment();
-
-// open big picture
+// Открытие полноразмерное картинки
 var cancelButton = bigPicture.querySelector('.big-picture__cancel');
 
 var onBigPicEscPress = function (evt) {
@@ -134,28 +121,21 @@ var openBigPicture = function (index) {
   var currentPicture = pictures[index];
   renderBigPhoto(currentPicture);
   hideElements();
-  addClass(body, 'modal-open');
-  removeClass(bigPicture, 'hidden');
+  window.utils.addClass(body, 'modal-open');
+  window.utils.removeClass(bigPicture, 'hidden');
 
   document.addEventListener('keydown', onBigPicEscPress);
 };
 
 var closeBigPicture = function () {
-  addClass(bigPicture, 'hidden');
-  removeClass(body, 'modal-open');
+  window.utils.addClass(bigPicture, 'hidden');
+  window.utils.removeClass(body, 'modal-open');
   document.removeEventListener('keydown', onBigPicEscPress);
 };
 
 cancelButton.addEventListener('click', function () {
   closeBigPicture();
 });
-
-var onEnterEvent = function (evt, action, arr) {
-  if (evt.keyCode === 'Enter') {
-    evt.preventDefault();
-    action(arr);
-  }
-};
 
 var showPhoto = function () {
   picturesList.addEventListener('click', function (evt) {
@@ -168,7 +148,7 @@ var showPhoto = function () {
   picturesList.addEventListener('keydown', function (evt) {
     if (evt.target.classList.contains('picture')) {
       var pictureIndex = evt.target.querySelector('img').dataset.id;
-      onEnterEvent(evt, openBigPicture, pictureIndex);
+      window.utils.isEnterEvent(evt, openBigPicture, pictureIndex);
     }
   });
 };
