@@ -2,6 +2,7 @@
 
 window.preview = (function () {
   var body = document.querySelector('body');
+  var picturesList = document.querySelector('.pictures');
   var bigPicture = document.querySelector('.big-picture');
   var commentsList = document.querySelector('.social__comments');
   var socialComment = commentsList.querySelector('.social__comment');
@@ -38,6 +39,8 @@ window.preview = (function () {
       closeBigPicture();
     }
   };
+
+  var pictures = window.gallery.getPhotoInfo();
 
   var openBigPicture = function (index) {
     var currentPicture = pictures[index];

@@ -39,20 +39,7 @@ window.gallery = (function () {
   };
 
   // Функция, возвращающаая массив объектов со свойствами фотографий
-  var getPhotoInfo = function () {
-    var photos = [];
-    for (var i = 1; i <= PHOTOS_NUMBER; i++) {
-      photos.push({
-        url: 'photos/' + i + '.jpg',
-        description: 'Здесь должно быть ваше описание фотографии',
-        likes: getRandomNumber(MIN_LIKES, MAX_LIKES),
-        comments: generateMessages()
-      });
-    }
-    return photos;
-  };
 
-  var pictures = getPhotoInfo();
 
   // Создаем DOM-элементы, соответствующие фотографиям
   var renderPicture = function (picture, index) {
@@ -67,12 +54,24 @@ window.gallery = (function () {
   };
 
   return {
+    getPhotoInfo: function () {
+      var photos = [];
+      for (var i = 1; i <= PHOTOS_NUMBER; i++) {
+        photos.push({
+          url: 'photos/' + i + '.jpg',
+          description: 'Здесь должно быть ваше описание фотографии',
+          likes: getRandomNumber(MIN_LIKES, MAX_LIKES),
+          comments: generateMessages()
+        });
+      }
+      return photos;
+    },
     makePictureList: function (userPictures) {
       var fragment = document.createDocumentFragment();
       for (var i = 0; i < userPictures.length; i++) {
         fragment.appendChild(renderPicture(userPictures[i], i));
       }
-      window.preview.showPicture(photos);
+      window.preview.showPicture(userPictures);
       picturesList.appendChild(fragment);
     }
   };
