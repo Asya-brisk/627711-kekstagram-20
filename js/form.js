@@ -1,7 +1,6 @@
 'use strict';
 
 window.form = (function () {
-  var body = document.querySelector('body');
   var imageUploadForm = document.querySelector('.img-upload__form');
   var imgUploadButton = imageUploadForm.querySelector('.img-upload__input');
   var imageOverlay = imageUploadForm.querySelector('.img-upload__overlay');
@@ -14,16 +13,33 @@ window.form = (function () {
     imageUploadForm.reset();
   };
 
+  var onSubmit = function (evt) {
+    evt.preventDefault();
+    window.backend.upload(new FormData(imageUploadForm), onSuccess, onError);
+  };
+
+  var onSuccess = function () {
+    hideEditForm();
+    window.messages.showSuccessPopup();
+  };
+
+  var onError = function (message) {
+    hideEditForm();
+    window.messages.showErrorPopup(message);
+  };
+
   var hideEditForm = function () {
     clearForm();
     window.utils.addClass(imageOverlay, 'hidden');
-    window.utils.removeClass(body, 'modal-open');
+    window.utils.removeModalOpenClass();
+
     window.zoom.removeImageZoom();
     window.effects.removeEffects();
     window.validation.deactivateValidityCheck();
 
     formCancelButton.removeEventListener('click', hideEditForm);
     submitFormBtn.removeEventListener('submit', hideEditForm);
+    imageUploadForm.removeEventListener('submit', onSubmit);
     document.removeEventListener('keydown', onEditFormEscPress);
   };
 
@@ -34,14 +50,17 @@ window.form = (function () {
   };
 
   var showEditForm = function () {
+    window.upload.previewFile();
+    window.utils.removeClass(imageOverlay, 'hidden');
+    window.utils.addModalOpenClass();
+
+    window.validation.activateValidityCheck();
     window.effects.applyEffects();
     window.zoom.addImageZoom();
-    window.utils.removeClass(imageOverlay, 'hidden');
-    window.utils.addClass(body, 'modal-open');
-    window.validation.activateValidityCheck();
 
     formCancelButton.addEventListener('click', hideEditForm);
     submitFormBtn.addEventListener('submit', hideEditForm);
+    imageUploadForm.addEventListener('submit', onSubmit);
     document.addEventListener('keydown', onEditFormEscPress);
   };
 

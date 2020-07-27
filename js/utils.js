@@ -11,16 +11,21 @@ window.utils = (function () {
     removeChilds: function (element) {
       element.innerHTML = '';
     },
+    addModalOpenClass: function () {
+      document.body.classList.add('modal-open');
+    },
+    removeModalOpenClass: function () {
+      document.body.classList.remove('modal-open');
+    },
     isEscEvent: function (evt, action) {
       if (evt.key === 'Escape') {
         evt.preventDefault();
         action();
       }
     },
-    isEnterEvent: function (evt, action, element) {
+    isEnterEvent: function (evt, action) {
       if (evt.key === 'Enter') {
-        evt.preventDefault();
-        action(element);
+        action();
       }
     }
   };
