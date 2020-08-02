@@ -53,6 +53,7 @@ window.gallery = (function () {
   var onLoadSuccessHandle = function (data) {
     showPictures(data);
     addListeners();
+    window.filters.showFilterMenu(data);
   };
 
   var onLoadErrorHandle = function (errorMessage) {
