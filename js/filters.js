@@ -58,7 +58,7 @@ window.filters = (function () {
     window.utils.addClass(evt.target, 'img-filters__button--active');
   };
 
-  var onFilterBtnClick = window.debounce(function (evt) {
+  var onFilterBtnClick = window.utils.debounce(function (evt) {
     if (evt.target.classList.contains('img-filters__button')) {
       toggleActiveClass(evt);
       switchFilter(evt);
