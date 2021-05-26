@@ -2,12 +2,13 @@
 
 window.form = (function () {
   var imageUploadForm = document.querySelector('.img-upload__form');
-  var imgUploadButton = imageUploadForm.querySelector('.img-upload__input');
   var imageOverlay = imageUploadForm.querySelector('.img-upload__overlay');
   var formCancelButton = imageOverlay.querySelector('.img-upload__cancel');
   var hashtagInput = imageUploadForm.querySelector('.text__hashtags');
   var imgDescription = imageUploadForm.querySelector('.text__description');
   var submitFormBtn = imageUploadForm.querySelector('.img-upload__submit');
+  var zoomLevel = imageOverlay.querySelector('.scale__control--value');
+  var effectLevelLine = document.querySelector('.effect-level');
 
   var clearForm = function () {
     imageUploadForm.reset();
@@ -16,16 +17,6 @@ window.form = (function () {
   var onSubmit = function (evt) {
     evt.preventDefault();
     window.backend.upload(new FormData(imageUploadForm), onSuccess, onError);
-  };
-
-  var onSuccess = function () {
-    hideEditForm();
-    window.messages.showSuccessPopup();
-  };
-
-  var onError = function (message) {
-    hideEditForm();
-    window.messages.showErrorPopup(message);
   };
 
   var hideEditForm = function () {
@@ -43,6 +34,16 @@ window.form = (function () {
     document.removeEventListener('keydown', onEditFormEscPress);
   };
 
+  var onSuccess = function () {
+    hideEditForm();
+    window.messages.showSuccessPopup();
+  };
+
+  var onError = function (message) {
+    hideEditForm();
+    window.messages.showErrorPopup(message);
+  };
+
   var onEditFormEscPress = function (evt) {
     if (document.activeElement !== hashtagInput && document.activeElement !== imgDescription) {
       window.utils.isEscEvent(evt, hideEditForm);
@@ -50,8 +51,11 @@ window.form = (function () {
   };
 
   var showEditForm = function () {
-    window.upload.previewFile();
     window.utils.removeClass(imageOverlay, 'hidden');
+    zoomLevel.value = '100%';
+    window.effects.removeEffects();
+    window.utils.addClass(effectLevelLine, 'hidden');
+
     window.utils.addModalOpenClass();
 
     window.validation.activateValidityCheck();
@@ -65,8 +69,6 @@ window.form = (function () {
   };
 
   return {
-    uploadImage: function () {
-      imgUploadButton.addEventListener('change', showEditForm);
-    }
+    showEditForm: showEditForm
   };
 })();

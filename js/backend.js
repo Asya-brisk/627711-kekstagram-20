@@ -2,8 +2,8 @@
 
 window.backend = (function () {
   var Url = {
-    GET: 'https://javascript.pages.academy/kekstagram/data',
-    POST: 'https://javascript.pages.academy/kekstagram'
+    GET: 'https://22.javascript.pages.academy/kekstagram/data',
+    POST: 'https://javascript.pages.academy/kekstagram/data'
   };
 
   var StatusCode = {
