@@ -3,7 +3,7 @@
 window.backend = (function () {
   var Url = {
     GET: 'https://22.javascript.pages.academy/kekstagram/data',
-    POST: 'https://javascript.pages.academy/kekstagram/data'
+    POST: 'https://javascript.pages.academy/kekstagram'
   };
 
   var StatusCode = {
