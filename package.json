@@ -11,8 +11,7 @@
     "url": "https://github.com/htmlacademy-javascript/627711-kekstagram-20/issues"
   },
   "devDependencies": {
-    "eslint": "7.1.0",
-    "eslint-config-htmlacademy": "0.5.2"
+    "eslint": "7.31.0"
   },
   "license": "MIT",
   "dependencies": {},
